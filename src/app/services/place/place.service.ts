@@ -29,6 +29,9 @@ export class PlaceService {
   private userPlaceReceived = new Subject<Place>();
   public userPlaceReceived$ = this.userPlaceReceived.asObservable();
 
+  private selectedPopupPlace = new Subject<Place>();
+  public selectedPopupPlace$ = this.selectedPopupPlace.asObservable();
+
   private static readonly JSON_HEADERS: HttpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
 
   constructor(private http: HttpClient, private router: Router) { }
@@ -39,6 +42,10 @@ export class PlaceService {
       this.setUserLatitude(succes.coords.latitude);
       this.coordinatesReceived.next({longitude: succes.coords.longitude, latitude: succes.coords.longitude});
     });
+  }
+
+  sendSelectedPlace(selectedPlace: Place) {
+    this.selectedPopupPlace.next(selectedPlace);
   }
 
   setUserLatitude(userLatitude:number) {

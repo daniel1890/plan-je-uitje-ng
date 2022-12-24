@@ -22,4 +22,8 @@ export class LandmarkListComponent implements OnInit {
         .subscribe(userPlaces => this.userPlaces = userPlaces);
   }
 
+  sendSelectedPlace(selectedPlace: Place) {
+    this.placeService.sendSelectedPlace(selectedPlace);
+  }
+
 }

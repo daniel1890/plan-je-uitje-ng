@@ -28,7 +28,7 @@ To style components inline tailwindcss is used, DaisyUI is used to generate comp
 
 For getting places in the area of the user.
 
-###### Routing API
+##### Routing API
 
 For generating a route between selected places.
 

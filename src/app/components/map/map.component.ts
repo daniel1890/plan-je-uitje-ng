@@ -68,32 +68,39 @@ export class MapComponent implements OnInit {
         this.initializeMarkers(places)
       }
     });
+
+    this.placeService.selectedPopupPlace$.subscribe((selectedPlace) => {
+      const foundPlace: Place[] = this.places.filter(place => selectedPlace.properties.place_id === place.properties.place_id);
+      const placeIndex = this.places.indexOf(foundPlace[0]);
+      console.log(foundPlace);
+      this.map.closePopup();
+      this.openPopup(placeIndex);
+    });
   }
 
-  onMapReady($event: Leaflet.Map) {
+  onMapReady($event: Leaflet.Map): void {
     this.map = $event;
     this.map.locate({setView: true, maxZoom: 16});
   }
 
-  initializeMarkers(places: Place[]) {
+  initializeMarkers(places: Place[]): void {
     places.forEach((place, index) => {
-      const marker = this.generateMarker(place, index);
+      let marker: any = this.generateMarker(place, index);
+      marker['index'] = index;
       marker.addTo(this.map);
       this.layers.push(marker);
     });
 
   }
 
-  addMarkerToUserPlaces(index: number): void {
-    console.log(index);
-    console.log(this.places[index]);
+  addPlaceToUserPlaces(index: number): void {
     this.placeService.addPlaceToUserPlaces(this.places[index]);
     this.map.closePopup();
     this.map.fireEvent('click',{latlng:[0,0]})
   }
 
-  generateMarker(place: Place, index: number) {
-    return Leaflet.marker([place.geometry.coordinates[1], place.geometry.coordinates[0]])
+  generateMarker(place: Place, index: number): Leaflet.Marker {
+    let marker: Leaflet.Marker = Leaflet.marker([place.geometry.coordinates[1], place.geometry.coordinates[0]])
     .bindPopup(place.properties.name)
     .setPopupContent(
       `
@@ -101,7 +108,7 @@ export class MapComponent implements OnInit {
         <h1 class="font-bold text-2xl">${place.properties.name}</h1>
         <p class="text-base"><b>Plaats:</b> ${place.properties.city}</p>
         <div><p class="text-base"><b>Adres:</b> ${place.properties.address_line1}, <b>Postcode:</b> ${place.properties.postcode}</p></div>
-        <div class="flex flex-row justify-end"><button (click)="addMarkerToUserPlaces(${place}) type="button" class="btn btn-primary">Voeg toe aan route</button></div>
+        <div class="flex flex-row justify-end"><button type="button" class="btn btn-primary">Voeg toe aan route</button></div>
       </div>
       `
     )
@@ -109,23 +116,49 @@ export class MapComponent implements OnInit {
       this.elementRef.nativeElement
         .querySelector(".btn")
         .addEventListener("click", () => {
-          this.addMarkerToUserPlaces(index);
+          this.addPlaceToUserPlaces(index);
         });
     })
-      .on('click', (event) => this.markerClicked(event, index))
-      .on('dragend', (event) => this.markerDragEnd(event, index));
+    .on('click', (event) => this.markerClicked(event, index))
+    .on('dragend', (event) => this.markerDragEnd(event, index));
+
+    return marker;
   }
 
-  mapClicked($event: any) {
+  getMarker(id: number): Leaflet.Marker | undefined {
+    let result: any | undefined;
+    if (this.map) {
+      this.map.eachLayer((layer: any) => {
+        if (layer instanceof Leaflet.Marker) {
+          let marker: any = layer;
+          const popup = layer.getPopup();
+          if(popup && marker.index == id) {
+            result = layer;
+            return;
+          }
+        }
+      });
+    }
+    return result;
+  }
+
+  openPopup(index: number): void {
+    if (index >= 0 && index < this.layers.length) {
+      this.layers[index].openPopup();
+    }
+  }
+
+  mapClicked($event: any): void {
     console.log($event.latlng.lat, $event.latlng.lng);
+    this.map.closePopup();
   }
 
-  markerClicked($event: any, index: number) {
+  markerClicked($event: any, index: number): void {
     console.log($event.latlng.lat, $event.latlng.lng);
     console.log(this.places[index])
   }
 
-  markerDragEnd($event: any, index: number) {
+  markerDragEnd($event: any, index: number): void {
     console.log($event.target.getLatLng());
   } 
 

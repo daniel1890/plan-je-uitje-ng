@@ -1,4 +1,4 @@
-<div class="flex flex-col justify-self-center h-screen bg-gray-50 dark:bg-primary-content">
+<div class="flex flex-col justify-self-center h-screen bg-neutral-content border-r-2 border-neutral-focus">
     <div class="flex items-center justify-center h-20 shadow-md bg-primary">
         <a routerLink="/">
             <h1 class="text-4xl text-center text text-gray-200 font-bold">Plan je Uitje</h1>
@@ -9,8 +9,9 @@
     <div class=" overflow-y-auto">
         <ul *ngFor="let place of userPlaces" class="flex flex-col py-0.5 menu">
             <li class="m-1" (click)="sendSelectedPlace(place) ">
-                <div class="flex flex-row justify-between items-center w-full px-5 py-2 bg-neutral rounded">
-                    <p class="text-lg text-gray-100 font-bold font-large">
+                <div
+                    class="flex flex-row justify-between items-center w-full px-5 py-2 bg-stone-400 border-2 border-stone-600 rounded drop-shadow-md hover:bg-stone-600 hover:text-primary">
+                    <p class="text-lg text-gray-800 font-bold font-large hover:text-slate-300">
                         {{ place.properties.name }}
                     </p>
                     <button type="button" class="btn btn-sm btn-error rounded"
@@ -26,6 +27,6 @@
         </ul>
     </div>
     <div *ngIf="userPlaces.length >= 2" class="flex flex-row justify-end pr-1 py-2">
-        <button type="button" class="btn btn-accent rounded btn-md p-5">Plan route</button>
+        <button type="button" class="btn btn-primary rounded btn-md p-5">Plan route</button>
     </div>
 </div>

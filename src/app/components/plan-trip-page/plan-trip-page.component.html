@@ -1,4 +1,12 @@
 <div class="min-h-screen min-w-screen grid grid-cols-[1.5fr,8.5fr] bg-gray-100 drawer drawer-mobile">
     <app-landmark-list></app-landmark-list>
     <app-map></app-map>
+    <div class="toast" style="z-index: 1001;">
+        <div class="alert alert-info">
+            <div>
+                <span>New message arrived.</span>
+            </div>
+            <button type="button" class="right-0 top-0" onclick="this.parentNode.parentNode.remove()">X</button>
+        </div>
+    </div>
 </div>

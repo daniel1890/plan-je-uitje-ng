@@ -26,4 +26,9 @@ export class LandmarkListComponent implements OnInit {
     this.placeService.sendSelectedPlace(selectedPlace);
   }
 
+  removePlaceFromUserList(placetoRemove: Place): void {
+    let placeToRemoveId = this.userPlaces.indexOf(placetoRemove);
+    this.userPlaces.splice(placeToRemoveId, 1);
+  }
+
 }

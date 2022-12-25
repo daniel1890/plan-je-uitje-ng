@@ -6,8 +6,8 @@
     </div>
     <h1 class="text-3xl text-center font-bold text-gray-600 pt-5 pb-5">Uw route</h1>
 
-    <div class=" overflow-y-auto">
-        <ul *ngFor="let place of userPlaces" class="flex flex-col py-0.5 menu">
+    <div class=" overflow-y-auto list" (cdkDropListDropped)="drop($event)" cdkDropList>
+        <ul *ngFor="let place of userPlaces" class="flex flex-col py-0.5 menu" cdkDrag>
             <li class="m-1" (click)="sendSelectedPlace(place) ">
                 <div
                     class="flex flex-row justify-between items-center w-full px-5 py-2 bg-stone-400 border-2 border-stone-600 rounded drop-shadow-md hover:bg-stone-600 hover:text-primary">

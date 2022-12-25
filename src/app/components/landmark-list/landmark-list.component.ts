@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Place } from 'src/app/models/place';
 import { PlaceService } from '../../services/place/place.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-landmark-list',
@@ -15,6 +16,11 @@ export class LandmarkListComponent implements OnInit {
   ngOnInit(): void {
     this.placeService.resetUserPlaces();
     this.getUserPlaces();
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.userPlaces, event.previousIndex, event.currentIndex);
+    console.log(this.userPlaces);
   }
   
   getUserPlaces(): void {

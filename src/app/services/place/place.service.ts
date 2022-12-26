@@ -84,7 +84,6 @@ export class PlaceService {
 
       if (this.userPlaces.length < PlaceService.MAXIMUM_AMOUNT_OF_PLACES) {
         this.userPlaces.push(placeToAdd);
-        console.log(this.userPlaces);
       }
     }
   }

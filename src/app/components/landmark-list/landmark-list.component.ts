@@ -21,7 +21,6 @@ export class LandmarkListComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.userPlaces, event.previousIndex, event.currentIndex);
-    console.log(this.userPlaces);
   }
   
   getUserPlaces(): void {

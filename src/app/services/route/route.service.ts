@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
 export class RouteService {
   private apiKey = environment.apiKey;
 
-  private routeReceived = new Subject<Route>();
+  private routeReceived = new Subject<any>();
   public routeReceived$ = this.routeReceived.asObservable();
 
   private static readonly JSON_HEADERS: HttpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
@@ -23,8 +23,15 @@ export class RouteService {
   planRoute(places: Place[]): void {
     const headers = RouteService.JSON_HEADERS;
     const planRouteRequest = new PlanRouteRequest(places);
+    let placesWaypoints = '';
+    places.forEach(
+      place => placesWaypoints += `${place.geometry.coordinates[1]},${place.geometry.coordinates[0]}|`
+    );
+    placesWaypoints = placesWaypoints.slice(0, -1);
 
-    this.http.get<PlanRouteResponse>(`https://api.geoapify.com/v1/routing?waypoints=51.9866271,5.9027517|51.998429,5.973999&mode=drive&apiKey=${this.apiKey}`, {headers}).subscribe({
+    console.log(placesWaypoints);
+
+    this.http.get<PlanRouteResponse>(`https://api.geoapify.com/v1/routing?waypoints=${placesWaypoints}&mode=drive&apiKey=${this.apiKey}`, {headers}).subscribe({
       next: (data) => {
         this.onPlanRoute(data);
       },
@@ -34,6 +41,6 @@ export class RouteService {
 
   private onPlanRoute(planRouteResponse: PlanRouteResponse): void {
     console.log('We have received a route! ', planRouteResponse);
-    this.routeReceived.next(planRouteResponse.route);
+    this.routeReceived.next(planRouteResponse);
   }
 }

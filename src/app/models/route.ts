@@ -9,8 +9,5 @@ export interface Route {
         time: number,
         legs: Array<any>,
     }
-    geometry: {
-        type: string,
-        coordinates: string,
-    }
+    features: Array<any>,
 }

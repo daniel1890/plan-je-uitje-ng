@@ -11,11 +11,7 @@ export class PlanTripPageComponent implements OnInit {
   constructor(private PlaceService: PlaceService) { }
 
   ngOnInit(): void {
-    // this.PlaceService.getPlaces().subscribe({
-    //   next: (places) =>{
-    //     console.log(places)
-    //   },
-    // });
+
   }
 
 }

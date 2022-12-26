@@ -1,10 +1,21 @@
+// @ts-nocheck
+
 import { ChangeDetectorRef, Component, ElementRef, OnInit } from '@angular/core';
 import * as Leaflet from 'leaflet'; 
 import { LatLng } from 'leaflet';
 import { Observable, Subject, Subscriber } from 'rxjs';
 import { Place } from 'src/app/models/place';
+import { RouteService } from 'src/app/services/route/route.service';
 import { PlaceService } from '../../services/place/place.service';
 
+const turnByTurnMarkerStyle = {
+  radius: 5,
+  fillColor: "#fff",
+  color: "#555",
+  weight: 1,
+  opacity: 1,
+  fillOpacity: 1
+};
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
 const shadowUrl = 'assets/marker-shadow.png';
@@ -46,7 +57,7 @@ export class MapComponent implements OnInit {
   public placesReceived$ = this.placesReceived.asObservable();
 
 
-  constructor(private placeService: PlaceService, private elementRef: ElementRef) {}
+  constructor(private placeService: PlaceService, private elementRef: ElementRef, private routeService: RouteService) {}
 
   ngOnInit(): void {
     this.placeService.getUserCoordinates();
@@ -64,18 +75,60 @@ export class MapComponent implements OnInit {
 
     this.placesReceived$.subscribe({
       next: (places) => {
-        console.log(places)
         this.initializeMarkers(places)
       }
     });
 
-    this.placeService.selectedPopupPlace$.subscribe((selectedPlace) => {
-      const foundPlace: Place[] = this.places.filter(place => selectedPlace.properties.place_id === place.properties.place_id);
-      const placeIndex = this.places.indexOf(foundPlace[0]);
-      console.log(foundPlace);
-      this.map.closePopup();
-      this.openPopup(placeIndex);
+    this.placeService.selectedPopupPlace$.subscribe(
+      (selectedPlace) => {
+        const foundPlace: Place[] = this.places.filter(place => selectedPlace.properties.place_id === place.properties.place_id);
+        const placeIndex = this.places.indexOf(foundPlace[0]);
+        this.map.closePopup();
+        this.openPopup(placeIndex);
     });
+
+    this.routeService.routeReceived$.subscribe({
+      next: (result: any) => {
+        console.log(result)
+        Leaflet.geoJSON(result, {
+          style: (feature) => {
+            return {
+              color: "rgba(20, 137, 255, 0.7)",
+              weight: 5
+            };
+          }
+        }).bindPopup((layer: any) => {
+          return `${layer.feature.properties.distance} ${layer.feature.properties.distance_units}, ${layer.feature.properties.time}`
+        }).addTo(this.map);
+      
+        // collect all transition positions
+        const turnByTurns: Array<any> = [];
+        result.features.forEach((feature: any) => feature.properties.legs.forEach((leg: any, legIndex: number) => leg.steps.forEach((step: any) => {
+          const pointFeature = {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": feature.geometry.coordinates[legIndex][step.from_index]
+            },
+            "properties": {
+              "instruction": step.instruction.text
+            }
+          }
+          turnByTurns.push(pointFeature);
+        })));
+      
+        Leaflet.geoJSON({
+          type: "FeatureCollection",
+          features: turnByTurns
+        }, {
+          pointToLayer: function(feature, latlng) {
+            return Leaflet.circleMarker(latlng, turnByTurnMarkerStyle);
+          }
+        }).bindPopup((layer: any) => {
+          return `${layer.feature.properties.instruction}`
+        }).addTo(this.map);
+      }
+    })
   }
 
   onMapReady($event: Leaflet.Map): void {
@@ -155,7 +208,6 @@ export class MapComponent implements OnInit {
 
   markerClicked($event: any, index: number): void {
     console.log($event.latlng.lat, $event.latlng.lng);
-    console.log(this.places[index])
   }
 
   markerDragEnd($event: any, index: number): void {

@@ -6,30 +6,51 @@
     </div>
     <h1 class="text-3xl text-center font-bold text-gray-600 pt-5 pb-5">Uw route</h1>
 
-    <div class=" overflow-y-auto list" (cdkDropListDropped)="drop($event)" cdkDropList>
-        <ul *ngFor="let place of userPlaces" class="flex flex-col py-0.5 menu" cdkDrag>
-            <li class="m-1" (click)="sendSelectedPlace(place) ">
+    <div *ngIf="route == undefined">
+        <div class=" overflow-y-auto list" (cdkDropListDropped)="drop($event)" cdkDropList>
+            <ul *ngFor="let place of userPlaces" class="flex flex-col py-0.5 menu" cdkDrag>
+                <li class="m-1" (click)="sendSelectedPlace(place) ">
+                    <div
+                        class="flex flex-row justify-between items-center w-full px-5 py-2 bg-stone-400 border-2 border-stone-600 rounded drop-shadow-md hover:bg-stone-600 hover:text-primary">
+                        <p class="text-lg text-gray-800 font-bold font-large hover:text-slate-300">
+                            {{ place.properties.name }}
+                        </p>
+                        <button type="button" class="btn btn-sm btn-error rounded"
+                            (click)="removePlaceFromUserList(place)"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                <path
+                                    d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div *ngIf="userPlaces.length == 0" class="ml-4 p-4">
+            <p class="text-gray-800 text-lg font-semibold">Voeg minimaal 2 locaties toe om een route te plannen!</p>
+        </div>
+        <div *ngIf="userPlaces.length >= 2" class="flex flex-row justify-end pr-1 py-2">
+            <button type="button" class="btn btn-primary rounded btn-md p-5" (click)="planRoute()">Plan route</button>
+        </div>
+    </div>
+
+    <div *ngIf="route != undefined">
+        <ul *ngFor="let place of userPlaces; let indexOfelement=index" class="steps steps-vertical w-full pr-1">
+            <li class="step step-primary w-full" [attr.data-content]="indexOfelement + 1"
+                (click)="sendSelectedPlace(place)">
                 <div
-                    class="flex flex-row justify-between items-center w-full px-5 py-2 bg-stone-400 border-2 border-stone-600 rounded drop-shadow-md hover:bg-stone-600 hover:text-primary">
+                    class="cursor-pointer flex flex-row justify-between items-center w-full px-5 py-2 bg-stone-400 border-2 border-stone-600 rounded drop-shadow-md hover:bg-stone-600 hover:text-primary">
                     <p class="text-lg text-gray-800 font-bold font-large hover:text-slate-300">
                         {{ place.properties.name }}
                     </p>
-                    <button type="button" class="btn btn-sm btn-error rounded"
-                        (click)="removePlaceFromUserList(place)"><svg xmlns="http://www.w3.org/2000/svg" width="16"
-                            height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                            <path
-                                d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                        </svg>
-                    </button>
                 </div>
             </li>
         </ul>
-    </div>
-    <div *ngIf="userPlaces.length == 0" class="ml-4 p-4">
-        <p class="text-gray-800 text-lg font-semibold">Voeg minimaal 2 locaties toe om een route te plannen!</p>
-    </div>
-    <div *ngIf="userPlaces.length >= 2" class="flex flex-row justify-end pr-1 py-2">
-        <button type="button" class="btn btn-primary rounded btn-md p-5" (click)="planRoute()">Plan route</button>
+
+        <div class="flex flex-row justify-end pr-1 py-2">
+            <button type="button" class="btn btn-primary rounded btn-md p-5" (click)="planNewRoute()">Plan nieuwe
+                route</button>
+        </div>
     </div>
 </div>

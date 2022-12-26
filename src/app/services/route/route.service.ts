@@ -1,7 +1,7 @@
 import { Route } from './../../models/route';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { Place } from 'src/app/models/place';
 import { PlanRouteResponse } from './dto/plan-route-response.dto';
 import { PlanRouteRequest } from './dto/plan-route-request.dto';
@@ -38,9 +38,12 @@ export class RouteService {
     });
   }
 
-
   private onPlanRoute(planRouteResponse: PlanRouteResponse): void {
     console.log('We have received a route! ', planRouteResponse);
     this.routeReceived.next(planRouteResponse);
+  }
+
+  planNewRoute(): void {
+    this.routeReceived.next(undefined);
   }
 }

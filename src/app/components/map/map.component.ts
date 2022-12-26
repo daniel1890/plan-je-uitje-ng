@@ -56,7 +56,6 @@ export class MapComponent implements OnInit {
   private placesReceived = new Subject<Place[]>();
   public placesReceived$ = this.placesReceived.asObservable();
 
-
   constructor(private placeService: PlaceService, private elementRef: ElementRef, private routeService: RouteService) {}
 
   ngOnInit(): void {
@@ -89,7 +88,7 @@ export class MapComponent implements OnInit {
 
     this.routeService.routeReceived$.subscribe({
       next: (result: any) => {
-        console.log(result)
+        if(result != undefined) {
         Leaflet.geoJSON(result, {
           style: (feature) => {
             return {
@@ -127,7 +126,7 @@ export class MapComponent implements OnInit {
         }).bindPopup((layer: any) => {
           return `${layer.feature.properties.instruction}`
         }).addTo(this.map);
-      }
+      }}
     })
   }
 
@@ -176,23 +175,6 @@ export class MapComponent implements OnInit {
     .on('dragend', (event) => this.markerDragEnd(event, index));
 
     return marker;
-  }
-
-  getMarker(id: number): Leaflet.Marker | undefined {
-    let result: any | undefined;
-    if (this.map) {
-      this.map.eachLayer((layer: any) => {
-        if (layer instanceof Leaflet.Marker) {
-          let marker: any = layer;
-          const popup = layer.getPopup();
-          if(popup && marker.index == id) {
-            result = layer;
-            return;
-          }
-        }
-      });
-    }
-    return result;
   }
 
   openPopup(index: number): void {

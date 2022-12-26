@@ -1,4 +1,4 @@
-<div class="flex flex-col justify-self-center h-screen bg-neutral-content border-r-2 border-neutral-focus">
+<div class="flex flex-col justify-self-center h-screen bg-neutral-content border-r-2 border-slate-400">
     <div class="flex items-center justify-center h-20 shadow-md bg-primary">
         <a routerLink="/">
             <h1 class="text-4xl text-center text text-gray-200 font-bold">Plan je Uitje</h1>
@@ -26,7 +26,10 @@
             </li>
         </ul>
     </div>
+    <div *ngIf="userPlaces.length == 0" class="ml-4 p-4">
+        <p class="text-gray-800 text-lg font-semibold">Voeg minimaal 2 locaties toe om een route te plannen!</p>
+    </div>
     <div *ngIf="userPlaces.length >= 2" class="flex flex-row justify-end pr-1 py-2">
-        <button type="button" class="btn btn-primary rounded btn-md p-5">Plan route</button>
+        <button type="button" class="btn btn-primary rounded btn-md p-5" (click)="planRoute()">Plan route</button>
     </div>
 </div>

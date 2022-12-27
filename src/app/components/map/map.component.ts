@@ -116,7 +116,7 @@ export class MapComponent implements OnInit {
           turnByTurns.push(pointFeature);
         })));
       
-        Leaflet.geoJSON({
+        const waypoints = Leaflet.geoJSON({
           type: "FeatureCollection",
           features: turnByTurns
         }, {
@@ -125,10 +125,18 @@ export class MapComponent implements OnInit {
           }
         }).bindPopup((layer: any) => {
           return `${layer.feature.properties.instruction}`
-        }).addTo(this.map);
-      }}
-    })
-  }
+        });
+
+        this.map.addLayer(waypoints);
+      }
+      
+      if(result == undefined) {
+        this.layers = [];
+        this.map.removeLayer(Leaflet.geoJSON)
+        this.initializeMarkers(this.places);
+      }
+    }
+    })}
 
   onMapReady($event: Leaflet.Map): void {
     this.map = $event;
